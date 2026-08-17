@@ -30,7 +30,14 @@ pipeline {
             }
             post {
                 always {
-                    junit '**/target/surefire-reports/*.xml'
+                    script {
+                        def reports = findFiles(glob: '**/target/surefire-reports/*.xml')
+                        if (reports.length > 0) {
+                            junit '**/target/surefire-reports/*.xml'
+                        } else {
+                            echo 'No test reports found, skipping junit publishing.'
+                        }
+                    }
                 }
             }
         }
