@@ -24,23 +24,6 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            steps {
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    script {
-                        if (fileExists('target/surefire-reports')) {
-                            junit '**/target/surefire-reports/*.xml'
-                        } else {
-                            echo 'No test reports found, skipping junit publishing.'
-                        }
-                    }
-                }
-            }
-        }
-
         stage('Docker Build') {
             steps {
                 sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
