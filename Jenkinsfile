@@ -32,8 +32,13 @@ pipeline {
 
         stage('Docker Run') {
             steps {
-                sh "docker stop ${IMAGE_NAME} || true"
-                sh "docker rm ${IMAGE_NAME} || true"
+                sh "docker rm -f ${IMAGE_NAME} || true"
+                sh """
+                    CONTAINER=\$(docker ps -q --filter publish=8080)
+                    if [ -n "\$CONTAINER" ]; then
+                        docker rm -f \$CONTAINER
+                    fi
+                """
                 sh "docker run -d --name ${IMAGE_NAME} -p 8080:8080 ${IMAGE_NAME}:${IMAGE_TAG}"
             }
         }
